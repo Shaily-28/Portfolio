@@ -1,3 +1,0 @@
-# Lab
-Hello, Lab
-
