@@ -13,10 +13,33 @@ img {
   margin: 1rem auto;    
 }
 :root {
-  --content-max: 100ch; 
+  --content-max: 100ch;
+  --color-accent: oklch(26.925% 0.12793 310.065);
 }
 body {
   max-width: var(--content-max); 
   margin-inline: auto;           
   padding: 1rem;                 
+}
+nav {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid oklch(80% 3% 200);
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+}
+nav a {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 0.5em;
+}
+html {
+  accent-color: var(--color-accent);
+}
+nav a.current,
+nav a:hover {
+  border-bottom: 0.4em solid var(--color-accent);
+  padding-bottom: 0.2em;
 }
