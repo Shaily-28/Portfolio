@@ -12,3 +12,11 @@ img {
   display: block;       
   margin: 1rem auto;    
 }
+:root {
+  --content-max: 100ch; 
+}
+body {
+  max-width: var(--content-max); 
+  margin-inline: auto;           
+  padding: 1rem;                 
+}
