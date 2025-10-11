@@ -128,3 +128,32 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-size: 400%;
 }
+.cv.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: 1.25rem;
+  margin-block: 1rem 2rem;
+}
+.cv-header {
+  margin-block: 0.5rem 1rem;
+}
+.cv-header h1 {
+  font-size: clamp(2rem, 6vw, 3rem); 
+}
+.cv-header .tagline {
+  margin: 0.25rem 0 0;
+  opacity: 0.75;
+}
+.cv-section {
+  padding: 1rem;
+  border: 1px solid oklch(37.602% 0.16593 327.286);
+  border-radius: 10px;
+  background: oklch(from var(--color-accent) 98% 0.5% h / 2%); /* ultra-light tint */
+}
+.cv-section h2 {
+  margin: 0 0 0.5rem 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 0.35rem solid var(--color-accent);
+  line-height: 1.1;
+  text-wrap: balance;
+}
