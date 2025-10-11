@@ -96,4 +96,28 @@ form button[type="submit"] {
 
   <button type="submit">Send</button>
 </form>
-
+.projects {
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+  gap: 1em;                 
+  margin-block: 1rem;        
+}
+.projects article {
+ 
+  display: grid;
+  grid-template-rows: subgrid; 
+  grid-row: span 3;             
+  align-content: start;         
+  padding: 0.5rem;
+  border: 1px solid oklch(35.082% 0.15581 264.262);
+  border-radius: 8px;
+} 
+.projects h2 {
+  margin: 0; 
+}
+.projects img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+} 
