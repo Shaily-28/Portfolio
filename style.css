@@ -60,3 +60,19 @@ form textarea {
 form label {
   margin-block: 0.5em;       
 }
+form {
+  display: grid;
+  grid-template-columns: auto 1fr;  
+  gap: 1em;                          
+}
+form label {
+  display: grid;
+  grid-template-columns: subgrid;    
+  grid-column: 1 / -1;               
+}
+form label > input,
+form label > textarea {
+  grid-column: 2;
+  width: 100%;
+  box-sizing: border-box;
+}
