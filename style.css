@@ -76,3 +76,24 @@ form label > textarea {
   width: 100%;
   box-sizing: border-box;
 }
+form button[type="submit"] {
+  grid-column: 1 / -1;
+  justify-self: start;   
+}
+<form action="mailto:Snievesadame@UCSD.edu" method="POST" enctype="text/plain">
+  <label>
+    Your Email:
+    <input type="email" name="email" value="test@example.com" required>
+  </label>
+  <label>
+    Subject:
+    <input type="text" name="subject" required>
+  </label>
+  <label>
+    Message:
+    <textarea name="body" rows="6" required></textarea>
+  </label>
+
+  <button type="submit">Send</button>
+</form>
+
