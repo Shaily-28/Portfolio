@@ -1,10 +1,32 @@
+html { color-scheme: light dark; }
+:root {
+  --bg: canvas;
+  --fg: canvastext;
+  --hairline: color-mix(in oklch, var(--fg), var(--bg) 85%);
+}
+body { background: var(--bg); color: var(--fg); }
+
+nav { border-bottom: 1px solid var(--hairline); }
+
+nav a.current { font-weight: 600; text-decoration: underline; }
+
+.color-scheme {
+  position: fixed;
+  top: .75rem;
+  right: .75rem;
+  font-size: .9rem;
+  background: var(--bg);
+  border: 1px solid var(--hairline);
+  padding: .25rem .5rem;
+  border-radius: .5rem;
+}
+.color-scheme select { font: inherit; }
 body {
   /* Set line height to 1.5 times the font size
 	   and use the OS’s UI font as the website font
 	 */
   font: 100%/1.5 system-ui;
 } 
-/* Style image*/
 img {
   max-width: 140px; 
   height: auto;    

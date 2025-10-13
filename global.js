@@ -41,8 +41,33 @@ try {
     }
     nav.append(a);
   }
-
+document.body.insertAdjacentHTML(
+  "afterbegin",
+  `
+  <label class="color-scheme">
+    Theme:
+    <select id="theme-select">
+      <option value="light dark">Automatic</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </label>
+  `
+); 
   console.log("Nav built successfully ✅");
 } catch (err) {
   console.error("Nav build failed ❌", err);
 }
+const select = document.querySelector("#theme-select");
+function setColorScheme(value) {
+ document.documentElement.style.setProperty("color-scheme", value);
+  if (select) select.value = value;
+}
+const savedScheme = localStorage.getItem("color-scheme");
+setColorScheme(savedScheme || "light dark"); 
+
+select?.addEventListener("input", (e) => {
+  const value = e.target.value;
+  setColorScheme(value);
+  localStorage.setItem("color-scheme", value);
+});
