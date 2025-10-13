@@ -1,37 +1,48 @@
-console.log("IT'S ALIVE!");
+console.log("IT'S ALIVE! (global.js loaded)");
+
 export function $$(selector, context = document) {
   return Array.from(context.querySelectorAll(selector));
 }
-const isLocal = ["localhost", "127.0.0.1"].includes(location.hostname);
-const BASE_PATH = isLocal ? "/" : `/${location.pathname.split("/")[1]}/`;
 
-const pages = [
-  { url: "",           title: "Home" },
-  { url: "projects/",  title: "Projects" },
-  { url: "contact/",   title: "Contact" },
-  { url: "resume/",    title: "Resume" },
-  { url: "https://github.com/Shaily-28", title: "GitHub", external: true },
-];
+try {
+ 
+  const isLocalHost = ["localhost", "127.0.0.1"].includes(location.hostname);
+  const isFile = location.protocol === "file:";
+  const BASE_PATH = isLocalHost || isFile
+    ? "/"
+    : `/${location.pathname.split("/")[1]}/`;
 
-const nav = document.createElement("nav");
-nav.setAttribute("aria-label", "Primary");
-document.body.prepend(nav);
+  const pages = [
+    { url: "",           title: "Home" },
+    { url: "projects/",  title: "Projects" },
+    { url: "contact/",   title: "Contact" },
+    { url: "resume/",    title: "Resume" },
+    { url: "https://github.com/Shaily-28", title: "GitHub", external: true },
+  ];
 
-for (const p of pages) {
-  const a = document.createElement("a");
-  a.href = p.external ? p.url : BASE_PATH + p.url;
-  a.textContent = p.title;
-}
+  document.querySelectorAll("body > nav").forEach(n => n.remove());
 
-if (p.external) a.target = "_blank";
+  const nav = document.createElement("nav");
+  nav.setAttribute("aria-label", "Primary");
+  document.body.prepend(nav);
 
- const isCurrent =
-    a.host === location.host &&
-    a.pathname.replace(/\/+$/, "") === location.pathname.replace(/\/+$/, "");
+  for (const p of pages) {
+    const a = document.createElement("a");
+    a.href = p.external ? p.url : BASE_PATH + p.url;
+    a.textContent = p.title;
+    if (p.external) a.target = "_blank";
 
-  if (isCurrent) {
-    a.classList.add("current");
-    a.setAttribute("aria-current", "page");
+    const isCurrent =
+      a.host === location.host &&
+      a.pathname.replace(/\/+$/, "") === location.pathname.replace(/\/+$/, "");
+    if (isCurrent) {
+      a.classList.add("current");
+      a.setAttribute("aria-current", "page");
+    }
+    nav.append(a);
   }
 
-  nav.append(a);
+  console.log("Nav built successfully ✅");
+} catch (err) {
+  console.error("Nav build failed ❌", err);
+}
