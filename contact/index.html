@@ -11,27 +11,33 @@
   <h1>Contact</h1>
   <p>Please use the form below to reach me:</p>
 
-  <form action="mailto:Snievesadame@UCSD.edu" method="POST" enctype="text/plain">
-    <label>
-      Your Email:
-      <input type="email" name="email" value="test@example.com">
-    </label>
-    <br><br>
+  <form id="contact-form" action="mailto:Snievesadame@UCSD.edu" method="GET">
+  <label>
+    Your Name
+    <input name="name" required>
+  </label>
+  <br><br>
 
-    <label>
-      Subject:
-      <input name="subject" value="Hello!">
-    </label>
-    <br><br>
+  <label>
+    Your Email
+    <input type="email" name="replyto" required>
+  </label>
+  <br><br>
 
-    <label>
-      Message:
-      <textarea name="body">This is a test message.</textarea>
-    </label>
-    <br><br>
+  <label>
+    Subject
+    <input name="subject" required>
+  </label>
+  <br><br>
 
-    <button>Send</button>
-  </form>
+  <label>
+    Message
+    <textarea name="message" rows="6" required></textarea>
+  </label>
+  <br><br>
+
+  <button type="submit">Send</button>
+</form>
 <script type="module" src="https://shaily-28.github.io/Portfolio/global.js"></script>
 </body>
 </html>

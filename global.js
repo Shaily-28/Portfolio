@@ -71,3 +71,35 @@ select?.addEventListener("input", (e) => {
   setColorScheme(value);
   localStorage.setItem("color-scheme", value);
 });
+const form = document.querySelector("#contact-form");
+
+form?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // Validate native constraints first
+  if (!form.reportValidity()) return;
+
+  const data = new FormData(form);
+
+  const to = form.action.replace(/^mailto:/i, "").trim();
+  const name = (data.get("name") || "").toString().trim();
+  const email = (data.get("replyto") || "").toString().trim();
+  const subject = (data.get("subject") || `Message from ${name || "your website"}`).toString();
+  const message = (data.get("message") || "").toString();
+
+  const bodyLines = [
+    `Name: ${name}`,
+    `Email: ${email}`,
+    "",
+    message,
+  ];
+
+  const params = new URLSearchParams({
+    subject,
+    body: bodyLines.join("\n"),
+  });
+
+  const url = `mailto:${to}?${params.toString()}`;
+
+  location.href = url;
+});
