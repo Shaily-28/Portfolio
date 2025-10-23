@@ -117,3 +117,45 @@ export async function fetchJSON(url) {
     return []; 
   }
 } 
+
+export function renderProjects(projectsArray, containerElement, headingLevel = 'h2') {
+  if (!Array.isArray(projectsArray)) projectsArray = [];
+  if (!(containerElement instanceof Element)) {
+    console.warn('renderProjects: invalid containerElement');
+    return;
+  }
+
+  const valid = new Set(['h1','h2','h3','h4','h5','h6']);
+  const tag = valid.has(headingLevel) ? headingLevel : 'h2';
+
+  containerElement.innerHTML = '';
+
+  if (projectsArray.length === 0) {
+    containerElement.innerHTML = `<p class="empty">No projects to display yet.</p>`;
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+
+  projectsArray.forEach((project) => {
+    const { title = 'Untitled Project', image = '', description = '' } = project || {};
+
+    const article = document.createElement('article');
+    article.innerHTML = `
+      <${tag}>${title}</${tag}>
+      ${image ? `<img src="${image}" alt="${title}">` : ''}
+      <p>${description}</p>
+    `;
+
+    frag.appendChild(article);
+  });
+
+  containerElement.appendChild(frag);
+}
+
+export async function fetchGitHubData(username) {
+  if (!username) return {};
+  // Reuse fetchJSON as the lab suggests
+  return await fetchJSON(`https://api.github.com/users/${encodeURIComponent(username)}`);
+}
+
