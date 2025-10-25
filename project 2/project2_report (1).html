@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Project 2 Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root{
+      --bg: hsl(225 25% 97%);
+      --surface: #ffffff;
+      --ink: hsl(220 20% 18%);
+      --muted: hsl(220 10% 40%);
+      --accent-1: #16031a;  
+      --accent-2: #973585;  
+      --accent-3: #d34e6f;  
+      --accent-4: #f39b4a;  
+      --accent-5: #ffe7a6;  
+      --border: hsl(220 15% 80%);
+      --chip: hsl(220 15% 93%);
+      --shadow: 0 12px 30px hsl(220 20% 10% / 0.08);
+    }
+
+      html { background: var(--bg); color: var(--ink); font: 100%/1.55 system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+      body { max-width: min(78rem, 92vw); margin: 2rem auto; }
+
+      /* Headings */
+
+      header {
+      text-align: center;
+      padding: 2.2rem 1rem;
+      border-radius: 1.2rem;
+      background: linear-gradient(135deg, var(--accent-5), var(--accent-4) 35%, var(--accent-3));
+      color: #1d1320;
+      box-shadow: var(--shadow);
+    }
+    header h1{
+      font-size: clamp(2rem, 1.4rem + 2.6vw, 3.2rem);
+      margin: 0 0 .25rem 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    header p { margin: 0; font-weight: 600; }
+
+    main{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      box-shadow: var(--shadow);
+      padding: clamp(1rem, 1.5vw + .5rem, 2rem);
+      margin-top: 1.2rem;
+    }
+
+    h2{
+      font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: .4rem;
+      margin-top: 1.2rem;
+      color: var(--accent-2);
+    }
+    h3{ color: var(--muted); margin-top: 1.4rem; }
+
+    .chip{
+      display: inline-block;
+      background: var(--chip);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .25rem .7rem;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+      figure{
+      margin: 1rem 0;
+      border: 1px solid var(--border);
+      border-radius: .8rem;
+      overflow: hidden;
+      background: #fff;
+    }
+    figure img{ width: 100%; display: block; }
+    figcaption{
+      padding: .6rem .8rem;
+      background: linear-gradient(90deg, #fff, var(--chip));
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    ul{ padding-left: 1.2rem; }
+    li + li{ margin-top: .35rem; }
+
+    /* “score” tags for decision bullets */
+    .score{ font-weight: 700; }
+    .earnest{ color: var(--accent-2); }
+    .deceptive{ color: var(--accent-3); }
+
+    .note{
+      font-size: .92rem; color: var(--muted);
+      background: var(--chip);
+      border: 1px solid var(--border);
+      padding: .6rem .8rem; border-radius: .6rem;
+      margin: .6rem 0 0;
+    }
+
+    .two-col{
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px){
+      .two-col{ grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>
+        <small>Assignment 4</small>
+        Persuasive or Deceptive Visualization?
+      </h1>
+
+      <p><strong>Shaily Nieves Adame</strong> — <em>Snievesadame@UCSD.edu</em></p>
+    </header>
+
+    <main>
+      <h2>Proposition</h2>
+      <p class="chip">Topic: U.S. Abortion Indicators (Guttmacher Institute)</p>
+      <p><strong>Claim:</strong>States that have restrictive policies do not reduce abortion rates, those policies only force residents to travel out of state.</p>
+
+      <section>
+        <h3>FOR the Proposition</h3>
+
+        <figure>
+          <img src="for_proposition_bubble.png" alt="Restrictiveness vs travel" />
+          <figcaption>
+            Higher restrictiveness correlates with increased out-of-state travel for abortion care.
+            Bubble size & color represent abortion rate per 1,000 women.
+          </figcaption>
+        </figure>
+
+        <p>Design Decisions and Rationale:</p>
+
+        <ul>
+        <li><span class="score earnest">+1.0</span> — <strong>Warm color palette.</strong>  
+        Knowing that this topic can be controversial, a warm gradient color palette enhances readability and engagement. Making the story approachable without resorting to alarmist conclusions.</li>
+        <li><span class="score deceptive">−0.5</span> — <strong>Dual encoding of abortion rate by both color and bubble size.</strong>  
+        Using two encodings for one variable creates visual richness that looks sophisticated. However, it also distracts from causality, gently steering attention toward “hot” states with high rates rather than questioning the underlying correlation.</li>
+        <li><span class="score deceptive">−1.0</span> — <strong>LOWESS smoothing curve with a soft ribbon.</strong>  
+        The smoother guides the viewer’s eye toward a clean upward trajectory and the translucent ribbon mimics a confidence band. These cues add statistical credibility while slightly overstating uniformity across states.</li>
+        </ul>
+        <p class="note">Data prep: Sorted/filtered the relevant colums - % of couties without known clinics and Number of abortions per 1,000 women ; 2020 indicators; direct percentage scales for x and y. (removing the states of AK/HI/DC is defensible for “comparability,” but also removes leverage points.)</p>
+
+      </section>
+
+      <section>
+        <h3>AGAINST the Proposition</h3>
+
+        <figure>
+          <img src="against_proposition.png" alt="Restrictiveness vs abortion rate regression" />
+          <figcaption> The kernal density suggest restrictive policy changes and clinic removals coresponds with lower abortion rates.</figcaption>
+        </figure>
+
+        <p>Design Decisions and Rationale:</p>
+
+        <ul>
+        <li><span class="score deceptive">−1.5</span> — <strong>Assertive Title Framing.</strong>  
+        The title is confident and implies a fact dispite the data. This type of framing preconditions the audience to interpret the visualization as proof that indeed, stricter laws reduce abortion rates.
+        <li><span class="score deceptive">−1.0</span> — <strong>Filled kernel density (KDE) background.</strong>  
+        The density map concentrates color where restrictiveness is high and abortion rates are low, visually amplifying the weight of each region. It creates a subtle but persuasive “heat” effect supporting the argument.</li>
+        <li><span class="score deceptive">−0.5</span> — <strong>Y-axis truncated slightly above zero.</strong>  
+        This choice increases slope steepness and contrast between states while staying numerically defensible. The visual exaggeration strengthens the sense of decline without overtly distorting values. In addition, the muted points create a "neutral" tone.</li>
+        </ul>
+        <p class="note">Fit summary (from linear model): slope ≈ −0.134, R² ≈ 0.35 tells us the trend is moderate; presentation choices KDE and axis floor heighten perceived strength. Filtered for and removed the out-of-state travel data. </p>
+
+      </section>
+
+      <section>
+        <h2>Final Reflection</h2>
+
+        <p>Perception is one of the determining factors of what anyone would deem truthful or false. In this project I learn to understand how quantitative and aesthetic design decisions determine how an audience perceives statistical relationships. I worked with a subset of the Guttmacher Institute dataset, and developed a proposition statement focusing on three indicators; clinic availability, travel percentage and abortion rate per 1,000 women. The purpose of my proposition was to highlight how the policy restrictiveness influences residents to travel out of state seeking care. I performed some preprocessing by filtering to contiguous U.S states and normalizing measures to percentage scales. I did this so all states would be compatible and the comparisons felt fair and direct.
+	For the visualization that supports my proposition, I used multi channel encoding where color and bubble sizes are mapped for abortion rates. I added the LOWESS smoothing line to reveal the overall pattern. The design appears objective because the axes are equally scaled [0-100], yet the redundant encoding and confident labeling strengthens the idea of increased travel as restrictiveness rises. Technically, this could be valid but it is important to note that these design choices strategically influence the perception more assertively than the raw data can justify. 
+	I implemented a regression based frame to the visualization that refutes my proposition in order to convey a more technical approach. The statistical framework is also a way to cause uncertainty to a viewer with little to no knowledge on linear models. With scipy.stats.linregress I was able to display the negative slope of -0.134. I adjusted the background kernel density estimate to visually concentrate the density in the lower right quadrant. As a result, abortion rates appear lowest under higher restrictiveness. I was able to portray a downward trend by removing the confidence interval and truncating the Y axis. Basically I added statistical methods to distract and to legitimize my point. 
+	Overall, I successfully argued both sides of the proposition by adjusting scale limits, bandwidth tuning, encoding and linguistic framing. No matter how small an adjustment can be as an audience we must always question transparency about design intent. Every encoding choice is an act of communication and story telling. That is where ethical visualization must always acknowledge persuasive and deceptive data frameworks.
+</p>
+      </section>
+    </main>
+  </body>
+</html>
