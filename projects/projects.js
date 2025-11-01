@@ -48,16 +48,20 @@ function drawProjectsPie(projects) {
     .append('title')
     .text(d => `${d.data[0]}: ${d.data[1]} projects`);
 
-  svg.selectAll('text')
-    .data(slices)
-    .join('text')
-    .attr('transform', d => `translate(${arc.centroid(d)})`)
-    .attr('text-anchor', 'middle')
-    .attr('dy', '0.35em')
-    .style('font-size', '10px')
-    .text(d => d.data[0]);
-}
+  const total = d3.sum(slices, d => d.data[1]);
 
-initProjectsPage();
+svg.selectAll('text')
+  .data(slices)
+  .join('text')
+  .attr('transform', d => `translate(${arc.centroid(d)})`)
+  .attr('text-anchor', 'middle')
+  .attr('dy', '0.35em')
+  .style('font-size', '10px')
+  .text(d => {
+    const year = d.data[0];
+    const n = d.data[1];
+    const pct = Math.round((n / total) * 100);
+    return `${year}\n${pct}% (${n})`;
+  });
 
-
+initProjectsPage();}

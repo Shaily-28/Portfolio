@@ -188,7 +188,7 @@ nav a.current {
 
 #projects-pie-plot {
   max-width: 14em;
-  margin-block: 1.5em;
+  margin-block: 1.5em auto;
   overflow: visible; 
 }
 
