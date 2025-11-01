@@ -118,36 +118,37 @@ export async function fetchJSON(url) {
   }
 } 
 
-export function renderProjects(projectsArray, containerElement, headingLevel = 'h2') {
-  if (!Array.isArray(projectsArray)) projectsArray = [];
-  if (!(containerElement instanceof Element)) {
-    console.warn('renderProjects: invalid containerElement');
-    return;
-  }
-
-  const valid = new Set(['h1','h2','h3','h4','h5','h6']);
-  const tag = valid.has(headingLevel) ? headingLevel : 'h2';
-
+function renderProjects(projectsArray, containerElement, tag = 'h2') {
   containerElement.innerHTML = '';
 
-  if (projectsArray.length === 0) {
+  if (!Array.isArray(projectsArray) || projectsArray.length === 0) {
     containerElement.innerHTML = `<p class="empty">No projects to display yet.</p>`;
     return;
   }
 
+ 
+  const safeTag = (tag === 'h2' || tag === 'h3') ? tag : 'h2';
+
   const frag = document.createDocumentFragment();
 
-  projectsArray.forEach((project) => {
-     const article = document.createElement('article');
-  article.innerHTML = `
-    ${tag ? `<${tag}>${title}</${tag}>` : `<h2>${title}</h2>`}
-    ${image ? `<img src="${image}" alt="${title}">` : ''}
-    <div class="project-meta">
-      <p class="project-desc">${description}</p>
-      ${year ? `<time class="project-year" datetime="${year}">${year}</time>` : ''}
-    </div>
-  `;
+  projectsArray.forEach((project = {}) => {
+    const {
+      title = 'Untitled Project',
+      image = '',
+      description = '',   
+      year = ''
+    } = project;
 
+    const article = document.createElement('article');
+    article.innerHTML = `
+      <${safeTag}>${title}</${safeTag}>
+      ${image ? '<img src="' + image + '" alt="' + title + '">' : ''}
+
+      <div class="project-meta">
+        <p class="project-desc">${description}</p>
+        ${year !== '' ? `<time class="project-year" datetime="${year}">${year}</time>` : ''}
+      </div>
+    `;
     frag.appendChild(article);
   });
 
