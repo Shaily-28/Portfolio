@@ -1,3 +1,4 @@
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm'; 
 import { fetchJSON, renderProjects } from '../global.js';
 
 async function initProjectsPage() {
@@ -19,7 +20,6 @@ async function initProjectsPage() {
 
 initProjectsPage();
 
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
 const svg = d3.select('#projects-pie-plot');
 
