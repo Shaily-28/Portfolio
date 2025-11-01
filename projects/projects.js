@@ -25,6 +25,18 @@ const svg = d3.select('#projects-pie-plot');
 
 const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
 
-const arc = arcGenerator({ startAngle: 0, endAngle: 2 * Math.PI });
+const data = [1, 2, 3, 4, 5, 5];
 
-svg.append('path').attr('d', arc).attr('fill', 'red');
+const slice = d3.pie();
+const arcData = slice(data);
+
+const arcs = arcData.map(d => arcGenerator(d));
+
+const colors = d3.scaleOrdinal(d3.schemeTableau10);
+
+arcs.forEach((pathD, i) => {
+  svg.append('path')
+     .attr('d', pathD)
+     .attr('fill', colors[i]);
+});
+
