@@ -128,6 +128,16 @@ form button[type="submit"] {
   display: block;
   border-radius: 6px;
 } 
+.project-meta {
+  display: grid;
+  gap: .25rem; 
+}
+.project-year {
+  font-variant-numeric: oldstyle-nums;
+  opacity: .85;
+  letter-spacing: .02em;
+}
+
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.1;
   text-wrap: balance;

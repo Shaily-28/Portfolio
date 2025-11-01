@@ -138,14 +138,15 @@ export function renderProjects(projectsArray, containerElement, headingLevel = '
   const frag = document.createDocumentFragment();
 
   projectsArray.forEach((project) => {
-    const { title = 'Untitled Project', image = '', description = '' } = project || {};
-
-    const article = document.createElement('article');
-    article.innerHTML = `
-      <${tag}>${title}</${tag}>
-      ${image ? `<img src="${image}" alt="${title}">` : ''}
-      <p>${description}</p>
-    `;
+     const article = document.createElement('article');
+  article.innerHTML = `
+    ${tag ? `<${tag}>${title}</${tag}>` : `<h2>${title}</h2>`}
+    ${image ? `<img src="${image}" alt="${title}">` : ''}
+    <div class="project-meta">
+      <p class="project-desc">${description}</p>
+      ${year ? `<time class="project-year" datetime="${year}">${year}</time>` : ''}
+    </div>
+  `;
 
     frag.appendChild(article);
   });
