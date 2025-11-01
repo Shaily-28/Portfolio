@@ -185,3 +185,10 @@ nav a.current {
 }
 #profile-stats dt { grid-row: 1; font-weight: 600; }
 #profile-stats dd { grid-row: 2; margin: 0; }
+
+#projects-pie-plot {
+  max-width: 20em;
+  margin-block: 2em;
+  overflow: visible; 
+}
+
