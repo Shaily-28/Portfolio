@@ -1,5 +1,3 @@
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
-
 import { fetchJSON, renderProjects } from '../global.js';
 
 async function initProjectsPage() {
@@ -21,22 +19,35 @@ async function initProjectsPage() {
 
 initProjectsPage();
 
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
+
 const svg = d3.select('#projects-pie-plot');
 
-const arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+const radius = 50;
+const arc = d3.arc().innerRadius(0).outerRadius(radius);
+const pie = d3.pie().value(d => d[1]); 
+const color = d3.scaleOrdinal(d3.schemeTableau10);
 
-const data = [1, 2, 3, 4, 5, 5];
+const yearCounts = Array.from(
+  d3.rollup(projects, v => v.length, d => String(d.year)) 
+);
 
-const slice = d3.pie();
-const arcData = slice(data);
+const slices = pie(yearCounts);
 
-const arcs = arcData.map(d => arcGenerator(d));
+svg.selectAll('path')
+  .data(slices)
+  .join('path')
+  .attr('d', arc)
+  .attr('fill', (d, i) => color(i))
+  .append('title')
+  .text(d => `${d.data[0]}: ${d.data[1]} projects`);
 
-const colors = d3.scaleOrdinal(d3.schemeTableau10);
-
-arcs.forEach((pathD, i) => {
-  svg.append('path')
-     .attr('d', pathD)
-     .attr('fill', colors[i]);
-});
+svg.selectAll('text')
+  .data(slices)
+  .join('text')
+  .attr('transform', d => `translate(${arc.centroid(d)})`)
+  .attr('text-anchor', 'middle')
+  .attr('dy', '0.35em')
+  .style('font-size', '10px')
+  .text(d => d.data[0]);
 
