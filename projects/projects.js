@@ -63,5 +63,6 @@ svg.selectAll('text')
     const pct = Math.round((n / total) * 100);
     return `${year}\n${pct}% (${n})`;
   });
+} 
 
-initProjectsPage();}
+initProjectsPage(); 
