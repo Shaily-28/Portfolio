@@ -118,7 +118,7 @@ export async function fetchJSON(url) {
   }
 } 
 
-function renderProjects(projectsArray, containerElement, tag = 'h2') {
+export function renderProjects(projectsArray, containerElement, tag = 'h2') {
   containerElement.innerHTML = '';
 
   if (!Array.isArray(projectsArray) || projectsArray.length === 0) {
@@ -126,7 +126,6 @@ function renderProjects(projectsArray, containerElement, tag = 'h2') {
     return;
   }
 
- 
   const safeTag = (tag === 'h2' || tag === 'h3') ? tag : 'h2';
 
   const frag = document.createDocumentFragment();
