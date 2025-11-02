@@ -2,6 +2,26 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 import { fetchJSON, renderProjects } from "../global.js";
 window.d3 = d3;
 
+let ALL_PROJECTS = [];
+let FILTERED = [];
+
+function toYearCounts(list) {
+  return Array.from(
+    d3.rollup(list, v => v.length, d => String(d.year)),
+    ([label, value]) => ({ label, value })
+  ).sort((a, b) => d3.ascending(+a.label, +b.label));
+}
+
+function debounce(fn, delay = 150) {
+  let t; 
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+function setTitleCount(n) {
+  const el = document.querySelector('.projects-title');
+  if (el) el.textContent = `Projects (${n})`;
+}
+
 const tip = (() => {
   const el = document.getElementById('tooltip');
   const show = (html, evt) => {
@@ -42,49 +62,37 @@ function clearActive() {
 }
 
 async function initProjectsPage() {
-  try {
-    console.time("initProjectsPage");
+  const projects = await fetchJSON('../lib/projects.json');
 
-    const projects = await fetchJSON("../lib/projects.json");
-    console.log("projects.json loaded:", { length: projects?.length, projects });
+  const projectsContainer = document.querySelector('.projects');
+  if (!projectsContainer) return;
 
-    const projectsContainer = document.querySelector(".projects");
-    if (!projectsContainer) {
-      console.warn("Missing .projects container on Projects page.");
-      return;
-    }
-    renderProjects(projects, projectsContainer, "h2");
+  ALL_PROJECTS = projects.slice();
+  FILTERED = projects.slice();
 
-const titleEl = document.querySelector(".projects-title");
-    if (titleEl) {
-      titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)\s*$/, "")} (${projects.length})`;
-    }
+  updateAll();
 
-if (!Array.isArray(projects) || projects.length === 0) {
-      console.warn("⚠️ No projects found (fetch likely failed). Charts will not draw.");
-      document.querySelector(".projects")?.insertAdjacentHTML(
-        "afterbegin",
-        `<p class="empty">No projects to display yet (couldn't load projects.json).</p>`
-      );
-      return;
-    }
-    const byYear = Array.from(
-      d3.rollup(projects, v => v.length, d => String(d.year)),
-      ([label, value]) => ({ label, value })
-    ).sort((a, b) => d3.ascending(+a.label, +b.label));
+  const input = document.getElementById('project-search');
+  if (input) {
+    input.addEventListener('input', debounce(ev => {
+      const q = ev.target.value.trim().toLowerCase();
+      FILTERED = ALL_PROJECTS.filter(p => {
+        const hay = `${p.title} ${p.description} ${p.year}`.toLowerCase();
+        return hay.includes(q);
+      });
+      updateAll();
+    }, 150));
+  }
 
-    console.log("byYear:", byYear);
+  function updateAll() {
 
-    console.log("draw pie len:", byYear.length);
+    const byYear = toYearCounts(FILTERED);
     drawProjectsPie(byYear);
-
-    console.log("draw bar len:", byYear.length);
     drawYearBarChart(byYear);
 
-  } catch (err) {
-    console.error("initProjectsPage crashed:", err);
-  } finally {
-    console.timeEnd("initProjectsPage");
+    renderProjects(FILTERED, projectsContainer, 'h2');
+
+    setTitleCount(FILTERED.length);
   }
 }
 
