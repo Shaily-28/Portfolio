@@ -1,7 +1,6 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 import { fetchJSON, renderProjects } from "../global.js";
 window.d3 = d3;
-console.log("✅ projects.js loaded");
 
 async function initProjectsPage() {
   try {
@@ -37,7 +36,6 @@ if (!Array.isArray(projects) || projects.length === 0) {
 
     console.log("byYear:", byYear);
 
-    // ---- DRAW ----
     console.log("draw pie len:", byYear.length);
     drawProjectsPie(byYear);
 
@@ -50,10 +48,6 @@ if (!Array.isArray(projects) || projects.length === 0) {
     console.timeEnd("initProjectsPage");
   }
 }
-
-drawProjectsPie(byYear);
-drawYearBarChart(byYear);
-
 
 
 function drawProjectsPie(data) {
