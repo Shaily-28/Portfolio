@@ -2,6 +2,32 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 import { fetchJSON, renderProjects } from "../global.js";
 window.d3 = d3;
 
+const state = { active: null };
+
+function setActiveYear(year) {
+  state.active = year;
+
+
+  d3.selectAll('.slice')
+    .classed('is-active', d => d.data.label === year)
+    .classed('is-dim',   d => d.data.label !== year);
+
+  d3.selectAll('.bar')
+    .classed('is-active', d => d.label === year)
+    .classed('is-dim',    d => d.label !== year);
+
+  d3.select('.legend').selectAll('li')
+    .classed('is-active', d => d.label === year)
+    .classed('is-dim',    d => d.label !== year);
+}
+
+function clearActive() {
+  state.active = null;
+  d3.selectAll('.slice,.bar,.legend li')
+    .classed('is-active', false)
+    .classed('is-dim', false);
+}
+
 async function initProjectsPage() {
   try {
     console.time("initProjectsPage");
@@ -66,41 +92,36 @@ function drawProjectsPie(data) {
   const slices = pie(data);
   const total = d3.sum(data, d => d.value);
 
-  svg.selectAll('path')
-    .data(slices)
-    .join('path')
-    .attr('d', arc)
-    .attr('fill', d => color(d.data.label))
-    .append('title')
-    .text(d => `${d.data.label}: ${d.data.value} projects`);
+svg.selectAll('path')
+  .data(slices)
+  .join('path')
+  .attr('class', 'slice')
+  .attr('d', arc)
+  .attr('fill', (d, i) => color(i))
+  .attr('tabindex', 0)                  
+  .append('title').text(d => `${d.data.label}: ${d.data.value} projects`);
 
-  svg.selectAll('text')
-    .data(slices)
-    .join('text')
-    .attr('transform', d => `translate(${arc.centroid(d)})`)
-    .attr('text-anchor', 'middle')
-    .attr('dy', '0.35em')
-    .style('font-size', '9px')
-    .each(function(d) {
-      const pct = Math.round((d.data.value / total) * 100);
-      const t = d3.select(this);
-      t.append('tspan')
-        .attr('x', 0)
-        .text(d.data.label);
-      t.append('tspan')
-        .attr('x', 0)
-        .attr('dy', '1em')
-        .text(`${pct}% (${d.data.value})`);
-    });
+svg.selectAll('.slice')                    
+  .on('mouseenter', (ev, d) => setActiveYear(d.data.label))
+  .on('mouseleave', clearActive)
+  .on('focus',      (ev, d) => setActiveYear(d.data.label))
+  .on('blur',       clearActive)
+  .on('click',      (ev, d) => setActiveYear(d.data.label));
+
 
   d3.select('.legend')
-    .selectAll('li')
-    .data(data)
-    .join('li')
-    .style('--color', d => color(d.label))
-    .html(d => `<span class="swatch" style="background: var(--color)"></span>${d.label} <em>(${d.value})</em>`);
-}
+  .selectAll('li')
+  .data(data, d => d.label)
+  .join('li')
+  .attr('tabindex', 0)
+  .html(d => `<span class="swatch" style="background: var(--color)"></span>${d.label} <em>(${d.value})</em>`)
+  .on('mouseenter', (ev, d) => setActiveYear(d.label))
+  .on('mouseleave', clearActive)
+  .on('focus',      (ev, d) => setActiveYear(d.label))
+  .on('blur',       clearActive)
+  .on('click',      (ev, d) => setActiveYear(d.label));
 
+}
 
 function drawYearBarChart(data) {
   const svg = d3.select('#projects-bar-plot');
@@ -139,26 +160,24 @@ function drawYearBarChart(data) {
     .selectAll('text').style('font-size', '10px');
 
   g.selectAll('rect')
-    .data(data)
-    .join('rect')
-    .attr('x', d => x(d.label))
-    .attr('y', d => y(d.value))
-    .attr('width', x.bandwidth())
-    .attr('height', d => innerH - y(d.value))
-    .attr('fill', d => color(d.label))
-    .append('title')
-    .text(d => `${d.label}: ${d.value} project${d.value === 1 ? '' : 's'}`);
+  .data(data, d => d.label)
+  .join('rect')
+  .attr('class', 'bar')
+  .attr('x', d => x(d.label))
+  .attr('y', d => y(d.value))
+  .attr('width', x.bandwidth())
+  .attr('height', d => innerH - y(d.value))
+  .attr('fill', d => color(d.label))
+  .attr('tabindex', 0)
+  .append('title').text(d => `${d.label}: ${d.value} projects`);
 
-  g.selectAll('text.bar-label')
-    .data(data)
-    .join('text')
-    .attr('class', 'bar-label')
-    .attr('x', d => x(d.label) + x.bandwidth() / 2)
-    .attr('y', d => y(d.value) - 6)
-    .attr('text-anchor', 'middle')
-    .style('font-size', '10px')
-    .style('display', d => (innerH - y(d.value) < 14 ? 'none' : null))
-    .text(d => d.value);
+g.selectAll('.bar')                       
+  .on('mouseenter', (ev, d) => setActiveYear(d.label))
+  .on('mouseleave', clearActive)
+  .on('focus',      (ev, d) => setActiveYear(d.label))
+  .on('blur',       clearActive)
+  .on('click',      (ev, d) => setActiveYear(d.label));
+
 }
 
 initProjectsPage();

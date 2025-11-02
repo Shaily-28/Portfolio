@@ -218,4 +218,9 @@ nav a.current {
   border-radius: 50%;
   background: var(--color);
 }
-
+.slice, .bar, .legend li { transition: opacity .15s ease, stroke-width .15s ease; cursor: pointer; }
+.is-dim { opacity: .25; }
+.is-active { outline: none; }
+.slice.is-active { stroke: currentColor; stroke-width: 2; }
+.bar.is-active   { stroke: currentColor; stroke-width: 2; }
+.legend li.is-active { font-weight: 700; text-decoration: underline; }
