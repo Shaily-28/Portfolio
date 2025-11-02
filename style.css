@@ -224,3 +224,13 @@ nav a.current {
 .slice.is-active { stroke: currentColor; stroke-width: 2; }
 .bar.is-active   { stroke: currentColor; stroke-width: 2; }
 .legend li.is-active { font-weight: 700; text-decoration: underline; }
+
+#tooltip{
+  position: fixed; z-index: 1000;
+  padding: .35rem .5rem; font-size: 12px;
+  background: color-mix(in oklab, var(--surface, #111) 85%, white 15%);
+  color: var(--text, #fff); border: 1px solid #555; border-radius: 6px;
+  pointer-events: none; box-shadow: 0 2px 12px rgb(0 0 0 / .25);
+}
+.slice, .bar { transition: opacity .15s ease, transform .15s ease; }
+.slice:hover, .bar:hover { transform: scale(1.02); }

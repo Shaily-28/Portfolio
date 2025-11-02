@@ -2,6 +2,19 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 import { fetchJSON, renderProjects } from "../global.js";
 window.d3 = d3;
 
+const tip = (() => {
+  const el = document.getElementById('tooltip');
+  const show = (html, evt) => {
+    el.innerHTML = html;
+    el.hidden = false;
+    const { clientX: x, clientY: y } = evt;
+    el.style.left = `${x + 12}px`;
+    el.style.top  = `${y + 12}px`;
+  };
+  const hide = () => { el.hidden = true; };
+  return { show, hide };
+})();
+
 const state = { active: null };
 
 function setActiveYear(year) {
@@ -84,37 +97,39 @@ function drawProjectsPie(data) {
   svg.selectAll('*').remove();
 
   const radius = 60;
-  const arc = d3.arc().innerRadius(0).outerRadius(radius);
+  const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius); // donut
   const pie = d3.pie().value(d => d.value);
-  const color = d3.scaleOrdinal(d3.schemeTableau10).domain(data.map(d => d.label));
+  const total = d3.sum(data, d => d.value);
+  const color = d3.scaleOrdinal(d3.schemeTableau10)
+  .domain(data.map(d => d.label)); 
 
 
   const slices = pie(data);
-  const total = d3.sum(data, d => d.value);
 
 svg.selectAll('path')
   .data(slices)
   .join('path')
   .attr('class', 'slice')
   .attr('d', arc)
-  .attr('fill', (d, i) => color(i))
-  .attr('tabindex', 0)                  
-  .append('title').text(d => `${d.data.label}: ${d.data.value} projects`);
-
-svg.selectAll('.slice')                    
-  .on('mouseenter', (ev, d) => setActiveYear(d.data.label))
-  .on('mouseleave', clearActive)
-  .on('focus',      (ev, d) => setActiveYear(d.data.label))
-  .on('blur',       clearActive)
-  .on('click',      (ev, d) => setActiveYear(d.data.label));
-
+  .attr('fill', d => color(d.data.label))
+  .on('mouseenter', (ev, d) => {
+    const pct = Math.round((d.data.value / total) * 100);
+    tip.show(`<strong>${d.data.label}</strong><br>${d.data.value} projects • ${pct}%`, ev);
+    setActiveYear(d.data.label);
+  })
+  .on('mousemove', (ev, d) => {
+    const pct = Math.round((d.data.value / total) * 100);
+    tip.show(`<strong>${d.data.label}</strong><br>${d.data.value} projects • ${pct}%`, ev);
+  })
+  .on('mouseleave', () => { tip.hide(); clearActive(); })
+  .on('click', (ev, d) => setActiveYear(d.data.label));
 
   d3.select('.legend')
   .selectAll('li')
   .data(data, d => d.label)
   .join('li')
   .attr('tabindex', 0)
-  .html(d => `<span class="swatch" style="background: var(--color)"></span>${d.label} <em>(${d.value})</em>`)
+  .html(d => `<span class="swatch" style="background:${color(d.label)}"></span>${d.label} <em>(${d.value})</em>`)
   .on('mouseenter', (ev, d) => setActiveYear(d.label))
   .on('mouseleave', clearActive)
   .on('focus',      (ev, d) => setActiveYear(d.label))
@@ -168,8 +183,10 @@ function drawYearBarChart(data) {
   .attr('width', x.bandwidth())
   .attr('height', d => innerH - y(d.value))
   .attr('fill', d => color(d.label))
-  .attr('tabindex', 0)
-  .append('title').text(d => `${d.label}: ${d.value} projects`);
+  .on('mouseenter', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); setActiveYear(d.label); })
+  .on('mousemove', (ev, d) => tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev))
+  .on('mouseleave', () => { tip.hide(); clearActive(); })
+  .on('click', (ev, d) => setActiveYear(d.label));
 
 g.selectAll('.bar')                       
   .on('mouseenter', (ev, d) => setActiveYear(d.label))
