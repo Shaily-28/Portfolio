@@ -18,8 +18,8 @@ async function initProjectsPage() {
     titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)\s*$/, '')} (${projects.length})`;
   }
 
-  
   drawProjectsPie(projects);
+  drawYearBarChart(projects);
 }
 
 function drawProjectsPie(projects) {
@@ -67,7 +67,6 @@ svg.selectAll('text')
   });
 } 
 
-drawYearBarChart(projects);
 
 function drawYearBarChart(projects) {
   const svg = d3.select('#projects-bar-plot');
