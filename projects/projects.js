@@ -1,39 +1,60 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
+import { fetchJSON, renderProjects } from "../global.js";
+window.d3 = d3;
 console.log("✅ projects.js loaded");
 
-import { fetchJSON, renderProjects } from "../global.js";
-
-window.d3 = d3;
-
-console.log("✅ D3 version:", d3.version);
-
 async function initProjectsPage() {
-  const projects = await fetchJSON('../lib/projects.json');
+  try {
+    console.time("initProjectsPage");
 
-  const projectsContainer = document.querySelector('.projects');
-  if (!projectsContainer) {
-    console.warn('Missing .projects container on Projects page.');
-    return;
+    const projects = await fetchJSON("../lib/projects.json");
+    console.log("projects.json loaded:", { length: projects?.length, projects });
+
+    const projectsContainer = document.querySelector(".projects");
+    if (!projectsContainer) {
+      console.warn("Missing .projects container on Projects page.");
+      return;
+    }
+    renderProjects(projects, projectsContainer, "h2");
+
+const titleEl = document.querySelector(".projects-title");
+    if (titleEl) {
+      titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)\s*$/, "")} (${projects.length})`;
+    }
+
+if (!Array.isArray(projects) || projects.length === 0) {
+      console.warn("⚠️ No projects found (fetch likely failed). Charts will not draw.");
+      document.querySelector(".projects")?.insertAdjacentHTML(
+        "afterbegin",
+        `<p class="empty">No projects to display yet (couldn't load projects.json).</p>`
+      );
+      return;
+    }
+    const byYear = Array.from(
+      d3.rollup(projects, v => v.length, d => String(d.year)),
+      ([label, value]) => ({ label, value })
+    ).sort((a, b) => d3.ascending(+a.label, +b.label));
+
+    console.log("byYear:", byYear);
+
+    // ---- DRAW ----
+    console.log("draw pie len:", byYear.length);
+    drawProjectsPie(byYear);
+
+    console.log("draw bar len:", byYear.length);
+    drawYearBarChart(byYear);
+
+  } catch (err) {
+    console.error("initProjectsPage crashed:", err);
+  } finally {
+    console.timeEnd("initProjectsPage");
   }
-
-renderProjects(projects, projectsContainer, 'h2');
-
-const titleEl = document.querySelector('.projects-title');
-if (titleEl) {
-  titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)\s*$/, '')} (${projects.length})`;
 }
-
-const byYear = Array.from(
-  d3.rollup(projects, v => v.length, d => String(d.year)),
-  ([label, value]) => ({ label, value })
-).sort((a, b) => d3.ascending(+a.label, +b.label));
-
-console.log('byYear:', byYear);
 
 drawProjectsPie(byYear);
 drawYearBarChart(byYear);
 
-console.log('drawProjectsPie len:', data?.length);
+
 
 function drawProjectsPie(data) {
   const svgEl = document.getElementById('projects-pie-plot');
@@ -86,7 +107,6 @@ function drawProjectsPie(data) {
     .html(d => `<span class="swatch" style="background: var(--color)"></span>${d.label} <em>(${d.value})</em>`);
 }
 
-console.log('drawYearBarChart len:', data?.length);
 
 function drawYearBarChart(data) {
   const svg = d3.select('#projects-bar-plot');
