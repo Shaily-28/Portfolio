@@ -26,21 +26,30 @@ function drawProjectsPie(projects) {
   const svg = d3.select('#projects-pie-plot');
   if (svg.empty()) return;
 
-  
   svg.selectAll('*').remove();
 
   const radius = 50;
   const arc = d3.arc().innerRadius(0).outerRadius(radius);
-  const pie = d3.pie().value(d => d[1]);
+  const pie = d3.pie().value(d => d.value);
   const color = d3.scaleOrdinal(d3.schemeTableau10);
 
 
   const yearCounts = Array.from(
-    d3.rollup(projects, v => v.length, d => String(d.year))
-  );
-
+  d3.rollup(projects, v => v.length, d => String(d.year)),
+  ([label, value]) => ({ label, value })
+);
   const slices = pie(yearCounts);
 
+  const legend = d3.select('.legend')
+  .selectAll('li')
+  .data(data)
+  .join('li')
+  .style('--color', (d, i) => color(i))
+  .html(d => `
+    <span class="swatch" style="background: var(--color)"></span>
+    ${d.label} <em>(${d.value})</em>
+  `);
+  
   svg.selectAll('path')
     .data(slices)
     .join('path')

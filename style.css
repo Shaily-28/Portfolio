@@ -197,4 +197,25 @@ nav a.current {
   margin: 1rem auto 2rem;
   overflow: visible;
 }
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 1rem auto;
+  max-width: 20em;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0.25em 0;
+  font-size: 0.9rem;
+}
+
+.legend .swatch {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background: var(--color);
+}
 
