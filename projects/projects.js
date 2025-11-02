@@ -11,16 +11,21 @@ async function initProjectsPage() {
     return;
   }
 
-  renderProjects(projects, projectsContainer, 'h2');
+renderProjects(projects, projectsContainer, 'h2');
 
-  const titleEl = document.querySelector('.projects-title');
-  if (titleEl) {
-    titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)\s*$/, '')} (${projects.length})`;
-  }
-
-  drawProjectsPie(projects);
-  drawYearBarChart(projects);
+const titleEl = document.querySelector('.projects-title');
+if (titleEl) {
+  titleEl.textContent = `${titleEl.textContent.replace(/\s*\(\d+\)\s*$/, '')} (${projects.length})`;
 }
+
+const byYear = Array.from(
+  d3.rollup(projects, v => v.length, d => String(d.year)),
+  ([label, value]) => ({ label, value })
+).sort((a, b) => d3.ascending(+a.label, +b.label));
+
+drawProjectsPie(byYear);
+drawYearBarChart(byYear);
+
 
 function drawProjectsPie(projects) {
   if (!document.getElementById('projects-pie-plot')) return;
