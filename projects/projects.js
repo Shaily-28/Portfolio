@@ -23,6 +23,8 @@ const byYear = Array.from(
   ([label, value]) => ({ label, value })
 ).sort((a, b) => d3.ascending(+a.label, +b.label));
 
+console.log('byYear:', byYear);
+
 drawProjectsPie(byYear);
 drawYearBarChart(byYear);
 
@@ -37,8 +39,8 @@ function drawProjectsPie(data) {
   const radius = 60;
   const arc = d3.arc().innerRadius(0).outerRadius(radius);
   const pie = d3.pie().value(d => d.value);
-  const color = d3.scaleOrdinal(d3.schemeTableau10)
-    .domain(data.map(d => d.label));
+  const color = d3.scaleOrdinal(d3.schemeTableau10).domain(data.map(d => d.label));
+
 
   const slices = pie(data);
   const total = d3.sum(data, d => d.value);
