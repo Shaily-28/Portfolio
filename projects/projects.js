@@ -23,59 +23,62 @@ async function initProjectsPage() {
 }
 
 function drawProjectsPie(projects) {
-  const svg = d3.select('#projects-pie-plot');
-  if (svg.empty()) return;
+  if (!document.getElementById('projects-pie-plot')) return;
 
+  const svg = d3.select('#projects-pie-plot');
   svg.selectAll('*').remove();
 
   const radius = 50;
   const arc = d3.arc().innerRadius(0).outerRadius(radius);
   const pie = d3.pie().value(d => d.value);
-  const color = d3.scaleOrdinal(d3.schemeTableau10);
-
 
   const yearCounts = Array.from(
   d3.rollup(projects, v => v.length, d => String(d.year)),
   ([label, value]) => ({ label, value })
 );
-  const slices = pie(yearCounts);
+  const labeled = Array.from(
+    d3.rollup(projects, v => v.length, d => String(d.year)),
+    ([label, value]) => ({ label, value })
+  );
 
-  const legend = d3.select('.legend')
-  .selectAll('li')
-  .data(data)
-  .join('li')
-  .style('--color', (d, i) => color(i))
-  .html(d => `
-    <span class="swatch" style="background: var(--color)"></span>
-    ${d.label} <em>(${d.value})</em>
-  `);
-  
+  const color = d3.scaleOrdinal(d3.schemeTableau10)
+    .domain(labeled.map(d => d.label));
+
+  const slices = pie(labeled);
+
   svg.selectAll('path')
     .data(slices)
     .join('path')
     .attr('d', arc)
-    .attr('fill', (d, i) => color(i))
+    .attr('fill', d => color(d.data.label))
     .append('title')
-    .text(d => `${d.data[0]}: ${d.data[1]} projects`);
+    .text(d => `${d.data.label}: ${d.data.value} projects`);
 
-  const total = d3.sum(slices, d => d.data[1]);
+  const total = d3.sum(labeled, d => d.value);
+  svg.selectAll('text')
+    .data(slices)
+    .join('text')
+    .attr('transform', d => `translate(${arc.centroid(d)})`)
+    .attr('text-anchor', 'middle')
+    .attr('dy', '0.35em')
+    .style('font-size', '8px')
+    .each(function (d) {
+      const pct = Math.round((d.data.value / total) * 100);
+      const t = d3.select(this);
+      t.append('tspan').attr('x', 0).text(d.data.label);
+      t.append('tspan').attr('x', 0).attr('dy', '1em').text(`${pct}% (${d.data.value})`);
+    });
 
-svg.selectAll('text')
-  .data(slices)
-  .join('text')
-  .attr('transform', d => `translate(${arc.centroid(d)})`)
-  .attr('text-anchor', 'middle')
-  .attr('dy', '0.35em')
-  .style('font-size', '8px')
-  .style('line-hieght', '1em')
-  .text(d => {
-    const year = d.data[0];
-    const n = d.data[1];
-    const pct = Math.round((n / total) * 100);
-    return `${year}\n${pct}% (${n})`;
-  });
+  const legend = d3.select('.legend')
+    .selectAll('li')
+    .data(labeled)
+    .join('li')
+    .style('--color', d => color(d.label))
+    .html(d => `
+      <span class="swatch" style="background: var(--color)"></span>
+      ${d.label} <em>(${d.value})</em>
+    `);
 } 
-
 
 function drawYearBarChart(projects) {
   const svg = d3.select('#projects-bar-plot');
