@@ -94,6 +94,11 @@ async function initProjectsPage() {
 
     setTitleCount(FILTERED.length);
   }
+  function highlight(text, q) {
+  if (!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig');
+  return text.replace(re, '<mark>$1</mark>');
+}
 }
 
 
