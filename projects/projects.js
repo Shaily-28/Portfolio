@@ -112,6 +112,8 @@ svg.selectAll('path')
   .attr('class', 'slice')
   .attr('d', arc)
   .attr('fill', d => color(d.data.label))
+  .append('title')
+  .text(d => `${d.data.label}: ${d.data.value} projects`)
   .on('mouseenter', (ev, d) => {
     const pct = Math.round((d.data.value / total) * 100);
     tip.show(`<strong>${d.data.label}</strong><br>${d.data.value} projects • ${pct}%`, ev);
@@ -124,7 +126,7 @@ svg.selectAll('path')
   .on('mouseleave', () => { tip.hide(); clearActive(); })
   .on('click', (ev, d) => setActiveYear(d.data.label));
   
-  svg.append('text')
+svg.append('text')
   .attr('text-anchor', 'middle')
   .attr('dy', '0.35em')
   .style('font-weight', 700)
@@ -146,6 +148,7 @@ svg.selectAll('path')
 }
 
 function drawYearBarChart(data) {
+  data = [...data].sort((a, b) => d3.descending(a.value, b.value));
   const svg = d3.select('#projects-bar-plot');
   if (svg.empty()) return;
   svg.selectAll('*').remove();
@@ -181,19 +184,52 @@ function drawYearBarChart(data) {
     .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('d')))
     .selectAll('text').style('font-size', '10px');
 
-  g.selectAll('rect')
+  g.append('text')
+  .attr('transform', `rotate(-90) translate(${-innerH/2},${-margin.left + 14})`)
+  .attr('text-anchor', 'middle')
+  .style('font-size', '12px')
+  .text('Projects');
+
+const bars = g.selectAll('rect')
   .data(data, d => d.label)
-  .join('rect')
-  .attr('class', 'bar')
-  .attr('x', d => x(d.label))
-  .attr('y', d => y(d.value))
-  .attr('width', x.bandwidth())
-  .attr('height', d => innerH - y(d.value))
-  .attr('fill', d => color(d.label))
+  .join(
+  
+    enter => enter.append('rect')
+      .attr('class', 'bar')
+      .attr('x', d => x(d.label))
+      .attr('y', innerH)                  
+      .attr('width', x.bandwidth())
+      .attr('height', 0)                  
+      .attr('fill', d => color(d.label))
+      .call(enter => enter.transition().duration(600)
+        .attr('y', d => y(d.value))
+        .attr('height', d => innerH - y(d.value))
+      ),
+
+    update => update.call(update => update.transition().duration(600)
+      .attr('x', d => x(d.label))
+      .attr('y', d => y(d.value))
+      .attr('width', x.bandwidth())
+      .attr('height', d => innerH - y(d.value))
+      .attr('fill', d => color(d.label))
+    ),
+
+    exit => exit.call(exit => exit.transition().duration(200)
+      .attr('y', innerH)
+      .attr('height', 0)
+    ).remove()
+  );
+
+bars
+  .attr('tabindex', 0)
   .on('mouseenter', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); setActiveYear(d.label); })
-  .on('mousemove', (ev, d) => tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev))
+  .on('mousemove', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); })
   .on('mouseleave', () => { tip.hide(); clearActive(); })
-  .on('click', (ev, d) => setActiveYear(d.label));
+  .on('click',    (ev, d) => setActiveYear(d.label));
+
+bars.select('title').remove();
+bars.append('title')
+  .text(d => `${d.label}: ${d.value} projects`);
 
 g.selectAll('.bar')                       
   .on('mouseenter', (ev, d) => setActiveYear(d.label))
