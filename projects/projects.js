@@ -123,6 +123,13 @@ svg.selectAll('path')
   })
   .on('mouseleave', () => { tip.hide(); clearActive(); })
   .on('click', (ev, d) => setActiveYear(d.data.label));
+  
+  svg.append('text')
+  .attr('text-anchor', 'middle')
+  .attr('dy', '0.35em')
+  .style('font-weight', 700)
+  .style('font-size', '12px')
+  .text(d3.sum(data, d => d.value));
 
   d3.select('.legend')
   .selectAll('li')

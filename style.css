@@ -234,3 +234,18 @@ nav a.current {
 }
 .slice, .bar { transition: opacity .15s ease, transform .15s ease; }
 .slice:hover, .bar:hover { transform: scale(1.02); }
+
+.charts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
