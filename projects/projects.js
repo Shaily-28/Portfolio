@@ -167,4 +167,4 @@ function drawYearBarChart(data) {
     .text(d => d.value);
 }
 
-initProjectsPage();}
+initProjectsPage();
