@@ -67,4 +67,72 @@ svg.selectAll('text')
   });
 } 
 
+drawYearBarChart(projects);
+
+function drawYearBarChart(projects) {
+  const svg = d3.select('#projects-bar-plot');
+  if (svg.empty()) return;
+  svg.selectAll('*').remove();
+
+  const counts = Array.from(
+    d3.rollup(projects, v => v.length, d => String(d.year))
+  )
+  .map(([year, n]) => ({ year, n }))
+  .sort((a, b) => d3.ascending(+a.year, +b.year)); 
+
+  const width = 520, height = 280;
+  const margin = { top: 10, right: 12, bottom: 40, left: 40 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+
+  const x = d3.scaleBand()
+    .domain(counts.map(d => d.year))
+    .range([0, innerW])
+    .padding(0.15);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(counts, d => d.n)]).nice()
+    .range([innerH, 0]);
+
+  const color = d3.scaleOrdinal(d3.schemeTableau10)
+    .domain(counts.map(d => d.year));
+
+  const g = svg
+    .attr('viewBox', `0 0 ${width} ${height}`)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  g.append('g')
+    .attr('transform', `translate(0,${innerH})`)
+    .call(d3.axisBottom(x))
+    .selectAll('text')
+    .style('font-size', '10px');
+
+  g.append('g')
+    .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('d')))
+    .selectAll('text')
+    .style('font-size', '10px');
+
+  g.selectAll('rect')
+    .data(counts)
+    .join('rect')
+    .attr('x', d => x(d.year))
+    .attr('y', d => y(d.n))
+    .attr('width', x.bandwidth())
+    .attr('height', d => innerH - y(d.n))
+    .attr('fill', d => color(d.year))
+    .append('title')
+    .text(d => `${d.year}: ${d.n} project${d.n === 1 ? '' : 's'}`);
+
+  g.selectAll('text.bar-label')
+    .data(counts)
+    .join('text')
+    .attr('class', 'bar-label')
+    .attr('x', d => x(d.year) + x.bandwidth() / 2)
+    .attr('y', d => y(d.n) - 6)
+    .attr('text-anchor', 'middle')
+    .style('font-size', '10px')
+    .text(d => d.n);
+}
+
 initProjectsPage(); 

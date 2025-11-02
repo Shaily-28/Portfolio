@@ -191,4 +191,10 @@ nav a.current {
   margin-block: 1.5em auto;
   overflow: visible; 
 }
+#projects-bar-plot {
+  max-width: 36em;
+  display: block;
+  margin: 1rem auto 2rem;
+  overflow: visible;
+}
 
