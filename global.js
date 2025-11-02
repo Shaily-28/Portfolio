@@ -156,7 +156,6 @@ export function renderProjects(projectsArray, containerElement, tag = 'h2') {
 
 export async function fetchGitHubData(username) {
   if (!username) return {};
-  // Reuse fetchJSON as the lab suggests
   return await fetchJSON(`https://api.github.com/users/${encodeURIComponent(username)}`);
 }
 
