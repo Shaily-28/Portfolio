@@ -1,6 +1,6 @@
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 console.log("✅ projects.js loaded");
 
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 import { fetchJSON, renderProjects } from "../global.js";
 
 window.d3 = d3;
@@ -33,6 +33,7 @@ console.log('byYear:', byYear);
 drawProjectsPie(byYear);
 drawYearBarChart(byYear);
 
+console.log('drawProjectsPie len:', data?.length);
 
 function drawProjectsPie(data) {
   const svgEl = document.getElementById('projects-pie-plot');
@@ -84,6 +85,8 @@ function drawProjectsPie(data) {
     .style('--color', d => color(d.label))
     .html(d => `<span class="swatch" style="background: var(--color)"></span>${d.label} <em>(${d.value})</em>`);
 }
+
+console.log('drawYearBarChart len:', data?.length);
 
 function drawYearBarChart(data) {
   const svg = d3.select('#projects-bar-plot');
