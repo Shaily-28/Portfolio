@@ -2,6 +2,22 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 import { fetchJSON, renderProjects } from "../global.js";
 window.d3 = d3;
 
+function arcTween(arc) {
+  return function(d) {
+    const i = d3.interpolate(this._current || d, d);
+    this._current = i(1);
+    return t => arc(i(t));
+  };
+}
+
+function arcTweenToZero(arc) {
+  return function(d) {
+    const zero = { ...d, startAngle: d.endAngle, endAngle: d.endAngle };
+    const i = d3.interpolate(d, zero);
+    return t => arc(i(t));
+  };
+}
+
 let ALL_PROJECTS = [];
 let FILTERED = [];
 
@@ -83,6 +99,23 @@ async function initProjectsPage() {
       updateAll();
     }, 150));
   }
+  const clearBtn = document.getElementById('project-search-clear');
+
+if (clearBtn && input) {
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    FILTERED = ALL_PROJECTS.slice();
+    updateAll();
+    input.focus();
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      clearBtn.click();
+      e.preventDefault();
+    }
+  });
+}
 
   function updateAll() {
 
@@ -110,7 +143,7 @@ function drawProjectsPie(data) {
   svg.selectAll('*').remove();
 
   const radius = 60;
-  const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius); // donut
+  const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius);
   const pie = d3.pie().value(d => d.value);
   const total = d3.sum(data, d => d.value);
   const color = d3.scaleOrdinal(d3.schemeTableau10)
@@ -119,25 +152,36 @@ function drawProjectsPie(data) {
 
   const slices = pie(data);
 
-svg.selectAll('path')
-  .data(slices)
-  .join('path')
+const paths = svg.selectAll('path.slice')
+  .data(slices, d => d.data.label); 
+
+paths.exit()
+  .transition().duration(400)
+  .attrTween('d', arcTweenToZero(arc))
+  .remove();
+
+const pathsEnter = paths.enter()
+  .append('path')
   .attr('class', 'slice')
-  .attr('d', arc)
   .attr('fill', d => color(d.data.label))
-  .append('title')
-  .text(d => `${d.data.label}: ${d.data.value} projects`)
+  .each(function(d) { this._current = d; })
+  .transition().duration(600)
+  .attrTween('d', arcTween(arc));
+
+paths.transition().duration(600)
+  .attrTween('d', arcTween(arc));
+
+const allSlices = paths.merge(pathsEnter);
+
+allSlices
   .on('mouseenter', (ev, d) => {
-    const pct = Math.round((d.data.value / total) * 100);
+    const pct = Math.round((d.data.value / d3.sum(data, d => d.value)) * 100);
     tip.show(`<strong>${d.data.label}</strong><br>${d.data.value} projects • ${pct}%`, ev);
     setActiveYear(d.data.label);
   })
-  .on('mousemove', (ev, d) => {
-    const pct = Math.round((d.data.value / total) * 100);
-    tip.show(`<strong>${d.data.label}</strong><br>${d.data.value} projects • ${pct}%`, ev);
-  })
   .on('mouseleave', () => { tip.hide(); clearActive(); })
   .on('click', (ev, d) => setActiveYear(d.data.label));
+
   
 svg.append('text')
   .attr('text-anchor', 'middle')
@@ -161,7 +205,6 @@ svg.append('text')
 }
 
 function drawYearBarChart(data) {
-  data = [...data].sort((a, b) => d3.descending(a.value, b.value));
   const svg = d3.select('#projects-bar-plot');
   if (svg.empty()) return;
   svg.selectAll('*').remove();
@@ -172,7 +215,7 @@ function drawYearBarChart(data) {
   const innerH = height - margin.top - margin.bottom;
 
   const x = d3.scaleBand()
-    .domain(data.map(d => d.label))     
+    .domain(data.map(d => d.label))
     .range([0, innerW])
     .padding(0.15);
 
@@ -197,60 +240,75 @@ function drawYearBarChart(data) {
     .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('d')))
     .selectAll('text').style('font-size', '10px');
 
-  g.append('text')
-  .attr('transform', `rotate(-90) translate(${-innerH/2},${-margin.left + 14})`)
-  .attr('text-anchor', 'middle')
-  .style('font-size', '12px')
-  .text('Projects');
+  const bars = g.selectAll('rect.bar')
+    .data(data, d => d.label);
 
-const bars = g.selectAll('rect')
-  .data(data, d => d.label)
-  .join(
-  
-    enter => enter.append('rect')
-      .attr('class', 'bar')
-      .attr('x', d => x(d.label))
-      .attr('y', innerH)                  
-      .attr('width', x.bandwidth())
-      .attr('height', 0)                  
-      .attr('fill', d => color(d.label))
-      .call(enter => enter.transition().duration(600)
-        .attr('y', d => y(d.value))
-        .attr('height', d => innerH - y(d.value))
-      ),
+  bars.exit()
+    .transition().duration(400)
+    .attr('y', innerH)
+    .attr('height', 0)
+    .remove();
 
-    update => update.call(update => update.transition().duration(600)
-      .attr('x', d => x(d.label))
-      .attr('y', d => y(d.value))
-      .attr('width', x.bandwidth())
-      .attr('height', d => innerH - y(d.value))
-      .attr('fill', d => color(d.label))
-    ),
+  const barsEnter = bars.enter()
+    .append('rect')
+    .attr('class', 'bar')
+    .attr('x', d => x(d.label))
+    .attr('width', x.bandwidth())
+    .attr('y', innerH)
+    .attr('height', 0)
+    .attr('fill', d => color(d.label));
 
-    exit => exit.call(exit => exit.transition().duration(200)
-      .attr('y', innerH)
-      .attr('height', 0)
-    ).remove()
-  );
+  barsEnter.transition().duration(500)
+    .attr('y', d => y(d.value))
+    .attr('height', d => innerH - y(d.value));
 
-bars
-  .attr('tabindex', 0)
-  .on('mouseenter', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); setActiveYear(d.label); })
-  .on('mousemove', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); })
-  .on('mouseleave', () => { tip.hide(); clearActive(); })
-  .on('click',    (ev, d) => setActiveYear(d.label));
+  const barsMerged = bars.merge(barsEnter)
+    .transition().duration(500)
+    .attr('x', d => x(d.label))
+    .attr('width', x.bandwidth())
+    .attr('y', d => y(d.value))
+    .attr('height', d => innerH - y(d.value));
 
-bars.select('title').remove();
-bars.append('title')
-  .text(d => `${d.label}: ${d.value} projects`);
+  barsMerged.selection()
+    .attr('tabindex', 0)
+    .on('mouseenter', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); setActiveYear(d.label); })
+    .on('mousemove', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); })
+    .on('mouseleave', () => { tip.hide(); clearActive(); })
+    .on('click',    (ev, d) => setActiveYear(d.label));
 
-g.selectAll('.bar')                       
-  .on('mouseenter', (ev, d) => setActiveYear(d.label))
-  .on('mouseleave', clearActive)
-  .on('focus',      (ev, d) => setActiveYear(d.label))
-  .on('blur',       clearActive)
-  .on('click',      (ev, d) => setActiveYear(d.label));
+  barsMerged.select('title').remove();
+  barsMerged.append('title')
+    .text(d => `${d.label}: ${d.value} projects`);
 
+  const labels = g.selectAll('text.bar-label')
+    .data(data, d => d.label);
+
+  labels.exit()
+    .transition().duration(400)
+    .attr('y', innerH - 6)
+    .style('opacity', 0)
+    .remove();
+
+  const labelsEnter = labels.enter()
+    .append('text')
+    .attr('class', 'bar-label')
+    .attr('x', d => x(d.label) + x.bandwidth() / 2)
+    .attr('y', innerH - 6)
+    .attr('text-anchor', 'middle')
+    .style('font-size', '10px')
+    .style('opacity', 0)
+    .text(d => d.value);
+
+  labelsEnter.transition().duration(500)
+    .attr('y', d => y(d.value) - 6)
+    .style('opacity', 1);
+
+  labels.merge(labelsEnter)
+    .transition().duration(500)
+    .attr('x', d => x(d.label) + x.bandwidth() / 2)
+    .attr('y', d => y(d.value) - 6)
+    .style('opacity', d => (innerH - y(d.value) < 14 ? 0 : 1));
 }
+
 
 initProjectsPage();
