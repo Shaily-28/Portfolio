@@ -1,6 +1,11 @@
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
-import { fetchJSON, renderProjects } from '../global.js';
-console.log('✅ D3 version:', d3.version);
+console.log("✅ projects.js loaded");
+
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
+import { fetchJSON, renderProjects } from "../global.js";
+
+window.d3 = d3;
+
+console.log("✅ D3 version:", d3.version);
 
 async function initProjectsPage() {
   const projects = await fetchJSON('../lib/projects.json');
