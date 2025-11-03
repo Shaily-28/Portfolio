@@ -237,36 +237,36 @@ function drawYearBarChart(data) {
     .selectAll('text').style('font-size', '10px');
 
 
-const barsSel = g.selectAll('rect.bar')
-  .data(data, d => d.label);
-const barsEnter = barsSel.enter()
-  .append('rect')
-  .attr('class', 'bar')
-  .attr('x', d => x(d.label))
-  .attr('y', innerH)          
-  .attr('width', x.bandwidth())
-  .attr('height', 0)
-  .attr('fill', d => color(d.label));
+  const barsSel = g.selectAll('rect.bar')
+   .data(data, d => d.label);
+  const barsEnter = barsSel.enter()
+   .append('rect')
+   .attr('class', 'bar')
+   .attr('x', d => x(d.label))
+   .attr('y', innerH)          
+   .attr('width', x.bandwidth())
+   .attr('height', 0)
+   .attr('fill', d => color(d.label));
 
-barsEnter.merge(barsSel)
-  .transition()
-  .duration(500)
-  .attr('x', d => x(d.label))
-  .attr('width', x.bandwidth())
-  .attr('y', d => y(d.value))
-  .attr('height', d => innerH - y(d.value));
+   barsEnter.merge(barsSel)
+   .transition()
+   .duration(500)
+   .attr('x', d => x(d.label))
+   .attr('width', x.bandwidth())
+   .attr('y', d => y(d.value))
+   .attr('height', d => innerH - y(d.value));
 
-barsSel.exit()
-  .transition()
-  .duration(300)
-  .attr('height', 0)
-  .attr('y', innerH)
-  .remove();
+   barsSel.exit()
+   .transition()
+   .duration(300)
+   .attr('height', 0)
+   .attr('y', innerH)
+   .remove();
 
-g.selectAll('rect.bar').select('title').remove();
-g.selectAll('rect.bar')
-  .append('title')
-  .text(d => `${d.label}: ${d.value}`);
+  g.selectAll('rect.bar').select('title').remove();
+  g.selectAll('rect.bar')
+   .append('title')
+   .text(d => `${d.label}: ${d.value}`);
 
 
   const labels = g.selectAll('text.bar-label')
