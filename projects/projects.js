@@ -78,50 +78,33 @@ function clearActive() {
 }
 
 async function initProjectsPage() {
-  console.time('initProjectsPage');
 
   const projects = await fetchJSON('../lib/projects.json');
-  ALL_PROJECTS = Array.isArray(projects) ? projects : [];
-  FILTERED = ALL_PROJECTS.slice();
+  ALL_PROJECTS = projects;
+  FILTERED = projects.slice();
 
   const projectsContainer = document.querySelector('.projects');
-  const titleEl = document.querySelector('.projects-title');
-
-  function setTitle(n) {
-    if (titleEl) titleEl.textContent = `Projects (${n})`;
-  }
+  const input = document.getElementById('project-search');
+  const clearBtn = document.getElementById('project-search-clear');
 
   function updateAll() {
     const byYear = toYearCounts(FILTERED);
     drawProjectsPie(byYear);
     drawYearBarChart(byYear);
-    if (projectsContainer) {
-      renderProjects(FILTERED, projectsContainer, 'h2');
-    }
-    setTitle(FILTERED.length);
+    renderProjects(FILTERED, projectsContainer, 'h2');  // ← restores cards
+    setTitleCount(FILTERED.length);
   }
-  const input = document.getElementById('project-search');
-  const clearBtn = document.getElementById('project-search-clear');
 
   if (input) {
-    input.addEventListener(
-      'input',
-      debounce(ev => {
-        const q = ev.target.value.trim().toLowerCase();
-        FILTERED = ALL_PROJECTS.filter(p => {
-          const hay = `${p.title} ${p.description} ${p.year}`.toLowerCase();
-          return hay.includes(q);
-        });
-        updateAll();
-      }, 150)
-    );
-
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && clearBtn) {
-        clearBtn.click();
-        e.preventDefault();
-      }
-    });
+    input.addEventListener('input', debounce(ev => {
+      const q = ev.target.value.trim().toLowerCase();
+      FILTERED = q
+        ? ALL_PROJECTS.filter(p =>
+            `${p.title} ${p.description} ${p.year}`.toLowerCase().includes(q)
+          )
+        : ALL_PROJECTS.slice();
+      updateAll();
+    }, 150));
   }
 
   if (clearBtn && input) {
@@ -131,11 +114,22 @@ async function initProjectsPage() {
       updateAll();
       input.focus();
     });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        clearBtn.click();
+        e.preventDefault();
+      }
+    });
   }
 
-  updateAll();
-  console.timeEnd('initProjectsPage');
+  if (input && input.value.trim()) {
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  } else {
+    updateAll();
+  }
 }
+
 
 function drawProjectsPie(data) {
   const svgEl = document.getElementById('projects-pie-plot');
