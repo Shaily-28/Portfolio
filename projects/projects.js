@@ -91,7 +91,7 @@ async function initProjectsPage() {
     const byYear = toYearCounts(FILTERED);
     drawProjectsPie(byYear);
     drawYearBarChart(byYear);
-    renderProjects(FILTERED, projectsContainer, 'h2');  // ← restores cards
+    renderProjects(FILTERED, projectsContainer, 'h2');  
     setTitleCount(FILTERED.length);
   }
 
@@ -236,45 +236,38 @@ function drawYearBarChart(data) {
     .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('d')))
     .selectAll('text').style('font-size', '10px');
 
-  const bars = g.selectAll('rect.bar')
-    .data(data, d => d.label);
 
-  bars.exit()
-    .transition().duration(400)
-    .attr('y', innerH)
-    .attr('height', 0)
-    .remove();
+const barsSel = g.selectAll('rect.bar')
+  .data(data, d => d.label);
+const barsEnter = barsSel.enter()
+  .append('rect')
+  .attr('class', 'bar')
+  .attr('x', d => x(d.label))
+  .attr('y', innerH)          
+  .attr('width', x.bandwidth())
+  .attr('height', 0)
+  .attr('fill', d => color(d.label));
 
-  const barsEnter = bars.enter()
-    .append('rect')
-    .attr('class', 'bar')
-    .attr('x', d => x(d.label))
-    .attr('width', x.bandwidth())
-    .attr('y', innerH)
-    .attr('height', 0)
-    .attr('fill', d => color(d.label));
+barsEnter.merge(barsSel)
+  .transition()
+  .duration(500)
+  .attr('x', d => x(d.label))
+  .attr('width', x.bandwidth())
+  .attr('y', d => y(d.value))
+  .attr('height', d => innerH - y(d.value));
 
-  barsEnter.transition().duration(500)
-    .attr('y', d => y(d.value))
-    .attr('height', d => innerH - y(d.value));
+barsSel.exit()
+  .transition()
+  .duration(300)
+  .attr('height', 0)
+  .attr('y', innerH)
+  .remove();
 
-  const barsMerged = bars.merge(barsEnter)
-    .transition().duration(500)
-    .attr('x', d => x(d.label))
-    .attr('width', x.bandwidth())
-    .attr('y', d => y(d.value))
-    .attr('height', d => innerH - y(d.value));
+g.selectAll('rect.bar').select('title').remove();
+g.selectAll('rect.bar')
+  .append('title')
+  .text(d => `${d.label}: ${d.value}`);
 
-  barsMerged.selection()
-    .attr('tabindex', 0)
-    .on('mouseenter', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); setActiveYear(d.label); })
-    .on('mousemove', (ev, d) => { tip.show(`<strong>${d.label}</strong><br>${d.value} projects`, ev); })
-    .on('mouseleave', () => { tip.hide(); clearActive(); })
-    .on('click',    (ev, d) => setActiveYear(d.label));
-
-  barsMerged.select('title').remove();
-  barsMerged.append('title')
-    .text(d => `${d.label}: ${d.value} projects`);
 
   const labels = g.selectAll('text.bar-label')
     .data(data, d => d.label);
