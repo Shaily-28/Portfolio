@@ -295,33 +295,35 @@ dl.info {
   border: 1px solid rgba(0,0,0,.08);
   border-radius: .5rem;
   box-shadow: 0 6px 18px rgba(0,0,0,.08);
-  transition-duration: 500ms;
-  transition-property: opacity, visibility;
+  transition: opacity 500ms, visibility 500ms;
 }
-
 dl.info dt { opacity: .7; font-weight: 600; }
 dl.info dd { margin: 0; }
 
-.tooltip {
-  position: fixed;
-  top: 1em;
-  left: 1em;
-  z-index: 1000;
-}
+.tooltip { position: fixed; top: 1em; left: 1em; z-index: 1000; }
+dl.info[hidden]:not(:hover, :focus-within) { opacity: 0; visibility: hidden; }
 
-dl.info[hidden]:not(:hover, :focus-within) {
-  opacity: 0;
-  visibility: hidden;
-}
-
-circle {
-  transition: 200ms;
-  transform-origin: center;
-  transform-box: fill-box;
-}
-
-circle:hover { transform: scale(1.5); }
 #commit-tooltip { pointer-events: none; }
+#commit-tooltip a { word-break: break-all; }
+
 .gridlines line { stroke:#ccc; stroke-opacity:.5; }
 .gridlines path, .gridlines text { display:none; }
+
+circle { transition: 200ms; transform-origin: center; transform-box: fill-box; }
+circle:hover { transform: scale(1.35); }
+
+@media (prefers-color-scheme: dark) {
+  dl.info {
+    background: rgba(30,30,30,.95);
+    color: #eaeaea;
+    border-color: #333;
+    box-shadow: 0 8px 22px rgba(0,0,0,.4);
+  }
+}
+
+@media (max-width: 640px) {
+  dl.info { font-size: .9rem; padding: .55rem .7rem; }
+}
+
+
 
