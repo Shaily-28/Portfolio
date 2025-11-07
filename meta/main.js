@@ -64,12 +64,37 @@ function renderCommitInfo(data, commits) {
   dl.append('dt').text('Maximum depth');
   dl.append('dd').text(maxDepth ?? 0);
 }
-function renderScatterPlot(data, commits) {
+function renderTooltipContent(commit) {
+  if (!commit || Object.keys(commit).length === 0) return;
+
+  const link = document.getElementById('commit-link');
+  const date = document.getElementById('commit-date');
+  link.href = commit.url;
+  link.textContent = commit.id;
+  date.textContent = commit.datetime?.toLocaleString('en', { dateStyle: 'full', timeStyle: 'short' });
+}
+function updateTooltipVisibility(isVisible) {
+  const tooltip = document.getElementById('commit-tooltip');
+  tooltip.hidden = !isVisible;
+}
+
+function updateTooltipPosition(event) {
+  const tooltip = document.getElementById('commit-tooltip');
+  const offset = 12;
+  const x = event.clientX + offset;
+  const y = event.clientY + offset;
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top  = `${y}px`;
+}
+  function renderScatterPlot(data, commits) {
   const width = 600;
   const height = 350;
   const margin = { top: 10, right: 10, bottom: 40, left: 50 };
 
-  const svg = d3.select('#chart').append('svg').attr('viewBox', `0 0 ${width} ${height}`).style('overflow', 'visible');
+  const svg = d3.select('#chart')
+    .append('svg')
+    .attr('viewBox', `0 0 ${width} ${height}`)
+    .style('overflow', 'visible');
 
   const usable = {
     left: margin.left,
@@ -77,7 +102,7 @@ function renderScatterPlot(data, commits) {
     top: margin.top,
     bottom: height - margin.bottom,
     width: width - margin.left - margin.right,
-    height: height - margin.top - margin.bottom,
+    height: height - margin.top - margin.bottom
   };
 
   const xScale = d3.scaleTime()
@@ -89,29 +114,25 @@ function renderScatterPlot(data, commits) {
     .domain([0, 24])
     .range([usable.bottom, usable.top]);
 
-
+ 
   svg.append('g')
     .attr('class', 'gridlines')
     .attr('transform', `translate(${usable.left},0)`)
     .call(d3.axisLeft(yScale).tickFormat('').tickSize(-usable.width));
 
- 
-  const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale)
-    .tickFormat(d => String(d % 24).padStart(2, '0') + ':00');
+  const xAxis = d3.axisBottom(xScale).ticks(6);
+  const yAxis = d3.axisLeft(yScale).tickFormat(d => String(d % 24).padStart(2, '0') + ':00');
 
   svg.append('g')
     .attr('transform', `translate(0,${usable.bottom})`)
-    .call(d3.axisBottom(xScale).ticks(6)); // ← fewer ticks
+    .call(xAxis);                   
 
   svg.append('g')
     .attr('transform', `translate(${usable.left},0)`)
-    .call(d3.axisLeft(yScale).tickFormat(d => String(d % 24).padStart(2, '0') + ':00'));
+    .call(yAxis);                 
 
-  
-  const r = 3;               
-  const jitterHours = 0.35;   
-  const jitterMinutes = 18;   
+  const r = 3, jitterHours = 0.35, jitterMinutes = 18;
+
   svg.append('g')
     .attr('class', 'dots')
     .selectAll('circle')
@@ -124,15 +145,23 @@ function renderScatterPlot(data, commits) {
     .attr('cy', d => yScale(d.hourFrac + (Math.random() - 0.5) * jitterHours))
     .attr('r', r)
     .attr('fill', 'steelblue')
-    .attr('fill-opacity', 0.65) 
-    .attr('stroke', '#fff')     
-    .attr('stroke-width', 0.75);
+    .attr('fill-opacity', 0.7)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 0.75)
+    .on('mouseenter', (event, commit) => {
+      renderTooltipContent(commit);
+      updateTooltipVisibility(true);
+      updateTooltipPosition(event);
+    })
+    .on('mousemove', (event) => updateTooltipPosition(event))
+    .on('mouseleave', () => updateTooltipVisibility(false));
 }
 
 (async function init() {
   const data = await loadData();
   const commits = processCommits(data);
   renderCommitInfo(data, commits);
-  renderScatterPlot(data, commits); 
+  console.log('commits:', commits.length); 
+  renderScatterPlot(data, commits);
 })();
 
