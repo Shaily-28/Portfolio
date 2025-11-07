@@ -324,6 +324,24 @@ circle:hover { transform: scale(1.35); }
 @media (max-width: 640px) {
   dl.info { font-size: .9rem; padding: .55rem .7rem; }
 }
+.selection {
+  fill-opacity: 0.1;
+  stroke: black;
+  stroke-opacity: 0.7;
+  stroke-dasharray: 5 3;
+  animation: marching-ants 2s linear infinite;
+}
+
+@keyframes marching-ants { to { stroke-dashoffset: -8; } }
+.selection {
+  fill-opacity: 0.1;
+  stroke: black;
+  stroke-opacity: 0.7;
+  stroke-dasharray: 5 3;
+  animation: marching-ants 2s linear infinite;
+}
+circle.selected { fill: #ff6b6b; }
+
 
 
 
