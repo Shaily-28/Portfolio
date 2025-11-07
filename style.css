@@ -281,3 +281,5 @@ nav a.current {
 
 .gridlines line { stroke: #ccc; stroke-opacity: .5; }
 .gridlines path, .gridlines text { display:none; }
+
+#chart svg { max-width: 100%; height: auto; }
