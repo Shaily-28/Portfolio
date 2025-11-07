@@ -274,3 +274,10 @@ nav a.current {
   cursor: pointer;
 }
 .projects-search button:hover { filter: brightness(1.1); }
+
+.stats { display:grid; grid-template-columns: max-content 1fr; gap:.25rem 1rem; }
+.stats dt { font-weight:600; }
+.stats dd { margin:0 0 .25rem 0; }
+
+.gridlines line { stroke: #ccc; stroke-opacity: .5; }
+.gridlines path, .gridlines text { display:none; }
