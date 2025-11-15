@@ -1,74 +1,86 @@
 [
     {
-        "title": "Lorem ipsum dolor sit.",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas mollitia dolor quisquam perspiciatis? Consectetur, nam dolores est quia laudantium modi rerum consequuntur eum atque vero ducimus minus, quasi voluptatum? Libero.",
-        "year": 2025
+        "title": "Boston Bike Traffic Explorer",
+        "image": "images/Lab-7map.png",
+        "description": "An interactive Mapbox + D3 web app visualizing Bluebikes traffic across Boston and Cambridge.",
+        "year": 2025,
+        "url": "https://Shaily-28.github.io/Lab-7/"
     },
     {
         "title": "Ipsam illo minus cum?",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Suscipit culpa nulla quae, nam consequuntur reiciendis at excepturi. Delectus fugit ipsam quae. Eligendi odio ipsa, eius, dolore aut id, ut optio ducimus deserunt distinctio quidem debitis est! Aperiam, facere.",
-        "year": 2025
+        "year": 2025,
+        "url": null
     },
     {
         "title": "Commodi reiciendis quisquam soluta?",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Dolor maiores repellendus, veritatis maxime facere architecto obcaecati nulla eius. Aperiam eum architecto iure quos porro officiis non. Sequi voluptas optio, eveniet neque libero totam culpa sunt ullam voluptates laudantium.",
-        "year": 2024 
+        "year": 2024,
+        "url": null
     },
     {
         "title": "Provident eaque maxime sed?",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Numquam delectus consectetur asperiores quibusdam. Quibusdam qui magni asperiores iure sapiente possimus sequi repudiandae! Unde totam consectetur earum dolor praesentium a reiciendis, magnam ad. Aspernatur illo error quisquam id ea.",
-        "year": 2023 
+        "year": 2023,
+        "url": null
     },
     {
         "title": "Aliquid deleniti repellendus sed.",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Qui voluptates cum praesentium reprehenderit aperiam id minus quibusdam, placeat animi corporis culpa itaque, sint inventore tempora iusto. Vitae deserunt maiores facere optio fugiat quasi voluptas soluta dicta aliquid amet?",
-        "year": 2021
+        "year": 2021,
+        "url": null
     },
     {
         "title": "Reprehenderit facilis sapiente dolores?",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Adipisci dolores, nobis, minus molestiae dolor aperiam voluptatum animi id officiis odio ut? Illum id ab quos porro molestias cumque iure, earum, explicabo facere sunt quo. Quibusdam cum odit blanditiis!",
-        "year": 2021 
+        "year": 2021,
+        "url": null
     },
     {
         "title": "Doloribus, porro nemo? Beatae.",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Officia ad distinctio libero voluptatum nisi suscipit porro ratione esse cupiditate, culpa, quidem similique animi quod voluptas modi soluta odit, dolores consequatur enim molestiae eaque vitae veniam? Voluptate, reprehenderit facere.",
-        "year": 2022 
+        "year": 2022,
+        "url": null
     },
     {
         "title": "Ab perspiciatis exercitationem recusandae?",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Deserunt dolore ipsam eum, praesentium eos, ducimus neque aliquam cum ipsa corporis fugiat libero nesciunt repellendus sapiente sit magnam. Temporibus explicabo autem enim fugiat totam consequuntur reiciendis, expedita voluptatum! Harum!",
-        "year": 2024 
+        "year": 2024,
+        "url": null
     },
     {
         "title": "Voluptas accusantium aliquid repudiandae.",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "In mollitia veritatis illo ab magni eum sunt porro, consequuntur temporibus eius facilis recusandae quaerat libero velit hic ut explicabo ipsam numquam similique minima delectus! Adipisci nisi consequuntur atque reprehenderit.",
-        "year": 2024 
+        "year": 2024,
+        "url": null
     },
     {
         "title": "Quos ipsa dolorum et.",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Eaque dolorem totam assumenda quaerat consequuntur fugit neque blanditiis ex magnam, repellat iste eveniet odio doloribus rem odit voluptate ipsum natus fuga dolorum! Voluptas est nemo mollitia nesciunt officia deleniti.",
-        "year": 2025 
+        "year": 2025,
+        "url": null
     },
     {
         "title": "Animi laudantium minus similique.",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Tempora, reprehenderit sunt et mollitia ratione aliquam fugit eos quas consectetur. Aspernatur totam provident alias ipsum cupiditate sit dolor architecto nam eaque veniam non, doloribus culpa dolore fugit sapiente exercitationem!",
-        "year": 2025 
+        "year": 2025,
+        "url": null
     },
     {
         "title": "Harum voluptatibus quia suscipit.",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Cumque eligendi tempore ipsa, dolore distinctio, vero minima asperiores odio laboriosam animi ipsum eius totam unde eaque rerum quo delectus praesentium nemo perferendis. Incidunt iusto dolor non eum placeat facilis.",
-        "year": 2025 
+        "year": 2025,
+        "url": null
     }
 ] 
